@@ -1,9 +1,12 @@
 // This example shows basic use of modals.
 // It uses slash commands, views.open, and views.update
 // Require the Bolt package (github.com/slackapi/bolt)
+require('dotenv').config();
 const { App } = require("@slack/bolt");
 
-const app = new App({
+console.log(process.env);
+
+const app = new App({  
     token: process.env.SLACK_BOT_TOKEN,
     signingSecret: process.env.SLACK_SIGNING_SECRET,
     socketMode: true,
@@ -51,7 +54,18 @@ app.command('/voc', async ({ ack, body, context }) => {
                         "type": "divider"
                     },
                     {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "*Feature request - * is a comment, message, or ask from a user to implement a specific feature into your product. Feature requests can be used to decide how to iterate on an existing product. \n *Product Improvement Suggestion - * are pieces of user feedback indicating ways you can make existing functionality better, either by improving the usability or revising existing workflows. \n *Bug fix - * is when end-users encounter something that is not working as expected or that is not working the way they believe it should be. Please, raise bug fixes requests in *Zendesk*. "
+                        }
+                    },
+                    {
+                        "type": "divider"
+                    },
+                    {
                         "type": "input",
+                        "block_id": "request_type",
                         "element": {
                             "type": "static_select",
                             "placeholder": {
@@ -63,15 +77,7 @@ app.command('/voc', async ({ ack, body, context }) => {
                                 {
                                     "text": {
                                         "type": "plain_text",
-                                        "text": "*this is plain_text text*",
-                                        "emoji": true
-                                    },
-                                    "value": "value-0"
-                                },
-                                {
-                                    "text": {
-                                        "type": "plain_text",
-                                        "text": "Feature request",
+                                        "text": "Feature Request",
                                         "emoji": true
                                     },
                                     "value": "value-1"
@@ -79,13 +85,13 @@ app.command('/voc', async ({ ack, body, context }) => {
                                 {
                                     "text": {
                                         "type": "plain_text",
-                                        "text": "Customer Feedback",
+                                        "text": "Product Improvement Suggestion",
                                         "emoji": true
                                     },
                                     "value": "value-2"
                                 }
                             ],
-                            "action_id": "static_select-action"
+                            "action_id": "static_select-action",                            
                         },
                         "label": {
                             "type": "plain_text",
@@ -165,7 +171,7 @@ app.command('/voc', async ({ ack, body, context }) => {
                         },
                         "label": {
                             "type": "plain_text",
-                            "text": "Impact:",
+                            "text": "Business Priority:",
                             "emoji": true
                         }
                     },
@@ -259,6 +265,7 @@ app.command('/voc', async ({ ack, body, context }) => {
 app.view('main_view', async ({ ack, body, view, client, logger }) => {
     // Acknowledge the view_submission request
     console.info('Received modal submit');
+    console.log(view);
     ack();
 
     // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
